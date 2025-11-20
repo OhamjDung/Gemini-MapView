@@ -317,6 +317,73 @@
         /* --- END OF POPUP STYLE UPDATES --- */
 
         /* --- UPDATED: New styles for the highlight confirmation popup --- */
+
+        /* --- NEW: Node Footer & Reprompt Styles --- */
+        .node-footer {
+            padding: 8px 16px;
+            border-top: 1px solid #4a4a50;
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            background-color: #2a2a2e; /* Match node bg */
+            border-bottom-left-radius: 12px;
+            border-bottom-right-radius: 12px;
+        }
+        .node-action-btn {
+            background: transparent;
+            border: 1px solid #555;
+            color: #ccc;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .node-action-btn:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+        .node-reprompt-form {
+            padding: 12px;
+            background-color: #3a3a40;
+            border-top: 1px solid #4a4a50;
+        }
+        .reprompt-input {
+            width: 100%;
+            background: #2a2a2e;
+            border: 1px solid #4a4a50;
+            color: white;
+            padding: 8px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            resize: vertical;
+            min-height: 60px;
+            margin-bottom: 8px;
+        }
+        .reprompt-actions {
+            display: flex;
+            gap: 8px;
+            justify-content: flex-end;
+        }
+        .confirm-reprompt {
+            background-color: #1a73e8;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+        .cancel-reprompt {
+            background-color: transparent;
+            border: 1px solid #555;
+            color: #ccc;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+        /* --- END: Node Footer Styles --- */
     </style>
 </head>
 <body>
@@ -412,6 +479,7 @@
     </div>
 
     <script>
+        console.log("Script execution started");
         // --- Global State ---
         const viewport = document.getElementById('viewport');
         const canvas = document.getElementById('canvas');
@@ -427,6 +495,10 @@
         const startScreen = document.getElementById('start-screen');
         const startPromptInput = document.getElementById('start-prompt-input');
         const startBtn = document.getElementById('start-btn');
+        
+        if (!startBtn) console.error("CRITICAL: Start button not found in DOM!");
+        else console.log("Start button found:", startBtn);
+
         const startFileInput = document.getElementById('start-file-input');
         const startFileName = document.getElementById('start-file-name');
         const popupFileInput = document.getElementById('popup-file-input');
@@ -511,8 +583,9 @@
             const isTextClick = e.target.closest('.node-response-content');
             const isPopupClick = e.target.closest('#highlight-popup');
             const isBtnClick = e.target.closest('.node-btn'); 
+            const isInputClick = e.target.closest('input, textarea, button, .node-reprompt-form');
 
-            if (isTextClick || isPopupClick || isBtnClick) {
+            if (isTextClick || isPopupClick || isBtnClick || isInputClick) {
                 return; // Don't pan
             }
             
@@ -1191,7 +1264,7 @@
                 return "Error: No API Key provided. Please enter your Gemini API Key in the top bar.";
             }
 
-            let fullPrompt = `Context: "${context}"\n\nUser Prompt: ${prompt}\n\nPlease provide a concise and helpful response.`;
+            let fullPrompt = `Context: "${context}"\n\nUser Prompt: ${prompt}\n\nPlease provide a concise and helpful response. With thinking steps that you do behind the scene`;
             
             // Construct parts array
             const parts = [{ text: fullPrompt }];
@@ -1213,15 +1286,13 @@
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
-                        contents: [{
-                            parts: parts
-                        }]
+                        contents: [{ parts: parts }]
                     })
                 });
 
                 if (!response.ok) {
-                    const err = await response.json();
-                    return `Error: ${err.error?.message || response.statusText}`;
+                    const errorData = await response.json();
+                    return `Error: ${errorData.error?.message || response.statusText}`;
                 }
 
                 const data = await response.json();
@@ -1244,50 +1315,34 @@
             let newNodeY;
 
             // --- START OF FIX: View-aware Y-positioning ---
-            // Get the current view root
             const currentRootId = viewHistory[viewHistory.length - 1];
             
-            // This logic is now universal, but the *nodes it measures*
-            // are dependent on the view.
-            
-            // Check if we are creating a child of the *current view root*
-            // (This is equivalent to creating A1 from A, or A1-1 from A1-focused)
             if (parentId === currentRootId) {
                 console.log(`[CreateNode] Creating child of current view root.`);
                 const siblingNodes = document.querySelectorAll(`.chat-node[data-parent-id="${parentId}"][style*="display: block"]`);
                 let maxBottom = 0;
                 
                 if (siblingNodes.length === 0) {
-                    console.log("[CreateNode] This is the first child. Aligning with parent.");
                     newNodeY = parentTop;
                 } else {
-                    console.log("[CreateNode] Finding max bottom of visible siblings...");
-                    siblingNodes.forEach(siblingNode => {
-                        maxBottom = Math.max(maxBottom, getSubtreeMaxBottom(siblingNode));
+                    siblingNodes.forEach(node => {
+                        maxBottom = Math.max(maxBottom, getSubtreeMaxBottom(node));
                     });
                     newNodeY = maxBottom + 20;
-                    console.log(`[CreateNode] Max bottom found at ${maxBottom}. Placing new node at ${newNodeY}px.`);
                 }
             } else {
-                // This is a sub-branch (e.g. creating A1-1 from A1, while in Root view)
-                // This logic is the same as before.
                 console.log("[CreateNode] Creating sub-branch.");
                 const siblingNodes = document.querySelectorAll(`.chat-node[data-parent-id="${parentId}"]`);
                 let maxBottom = 0; 
                 if (siblingNodes.length > 0) {
-                    console.log("[CreateNode] Finding max bottom of all sibling sub-trees...");
-                    siblingNodes.forEach(siblingNode => {
-                        // --- FIX: Must use getSubtreeMaxBottom ---
-                        let siblingSubtreeBottom = getSubtreeMaxBottom(siblingNode);
-                        maxBottom = Math.max(maxBottom, siblingSubtreeBottom);
+                     siblingNodes.forEach(node => {
+                        maxBottom = Math.max(maxBottom, getSubtreeMaxBottom(node));
                     });
                 }
                 if (maxBottom === 0) {
-                    console.log(`[CreateNode] This is the first sub-node (${parentId}-1). Aligning with parent.`);
                     newNodeY = parentTop;
                 } else {
-                    console.log(`[CreateNode] Placing subsequent sub-node below sibling. Max bottom: ${maxBottom}`);
-                    newNodeY = maxBottom + 20; 
+                    newNodeY = maxBottom + 20;
                 }
             }
             // --- END OF FIX ---
@@ -1306,18 +1361,18 @@
                  if (attachment.mimeType.startsWith('image/')) {
                      attachmentHTML = `<img src="data:${attachment.mimeType};base64,${attachment.data}" style="max-width: 100%; max-height: 150px; border-radius: 8px; margin-top: 8px; display: block;">`;
                  } else {
-                     attachmentHTML = `<div style="margin-top: 8px; font-size: 0.8rem; color: #aaa;">📎 Attached File (${attachment.mimeType})</div>`;
+                     attachmentHTML = `<div style="background:#333; padding:8px; border-radius:6px; margin-top:8px; font-size:0.8rem;">📎 ${attachment.name}</div>`;
                  }
             }
 
             if (newPromptText && newPromptText.length > 0) {
                 promptTitle = "You (follow-up)";
                 promptContent = `
+                    <p class="prompt-context" style="font-size:0.8rem; color:#888; margin-bottom:4px;">
+                        Context: "<em>${highlightedText.substring(0, 50)}${highlightedText.length > 50 ? '...' : ''}</em>"
+                    </p>
                     <p class="prompt-text">${newPromptText}</p>
                     ${attachmentHTML}
-                    <p class="prompt-context" style="font-size: 0.8rem; color: #ccc; margin-top: 8px; border-left: 2px solid #555; padding-left: 8px; opacity: 0.8; font-style: italic;">
-                        Context: "${highlightedText}"
-                    </p>
                 `;
             } else {
                 promptTitle = "You (highlighted)";
@@ -1332,44 +1387,54 @@
             newNode.dataset.branchId = newBranchId;
             newNode.dataset.childCounter = "0";
             newNode.dataset.parentId = parentId;
+            newNode.dataset.context = encodeURIComponent(highlightedText);
 
             newNode.innerHTML = `
-                <!-- NEW: Collapse Button -->
                 <button class="node-btn node-collapse-btn" title="Collapse/Expand Branch">-</button>
-                <!-- NEW: Root Button -->
                 <button class="node-btn node-root-btn" title="Focus on this node" data-node-id="${newNodeId}">◉</button>
-                <!-- NEW: Remove Button -->
                 <button class="node-btn node-remove-btn" title="Remove Node">×</button>
 
-                <div class="node-prompt">
-                    <p>${promptTitle}</p>
-                    ${promptContent}
-                </div>
-                <div class="node-response">
-                    <p>Gemini</p>
-                    <div class="node-response-content" id="response-${newNodeId}">
-                        <p><span style="color: #888;">Thinking...</span></p>
+                <div class="node-content-wrapper">
+                    <div class="node-prompt">
+                        <p>${promptTitle}</p>
+                        ${promptContent}
                     </div>
+                    <div class="node-response" id="response-${newNodeId}">
+                        <p>Gemini:</p>
+                        <div class="node-response-content">Generating...</div>
+                    </div>
+                </div>
+
+                <div class="node-reprompt-form" style="display:none">
+                    <textarea class="reprompt-input" placeholder="Enter new prompt..."></textarea>
+                    <div class="reprompt-actions">
+                        <button class="confirm-reprompt">Generate</button>
+                        <button class="cancel-reprompt">Cancel</button>
+                    </div>
+                </div>
+
+                <div class="node-footer">
+                    <button class="node-action-btn reprompt-btn">Re-prompt</button>
+                    <button class="node-action-btn undo-btn" style="display:none">Undo</button>
                 </div>
             `;
             
             canvas.appendChild(newNode);
             
-            // --- START OF FIX: View-aware layout ---
             if (currentRootId === 'A') {
-                // We are in the main view, run the powerful global layout
-                console.log(`[CreateNode] In Root view. Calling global runReflow.`);
                 runReflow(newNode);
             } else {
-                // We are in a focused view, run the simple focused layout
-                console.log(`[CreateNode] In Focused view. Calling focused reflow.`);
                 reflowFocusedView(document.getElementById(currentRootId));
             }
-            // --- END OF FIX ---
 
             // --- API Call ---
             const apiPrompt = newPromptText || "Elaborate on this.";
-            const responseText = await callGeminiAPI(apiPrompt, highlightedText, attachment);
+
+            // Get full text of the parent node for better context
+            const fullParentText = parentNode.querySelector('.node-response-content') ? parentNode.querySelector('.node-response-content').innerText : "";
+            const combinedContext = `Full Context of Parent Node:\n"${fullParentText}"\n\nSpecific Highlighted Text:\n"${highlightedText}"`;
+
+            const responseText = await callGeminiAPI(apiPrompt, combinedContext, attachment);
             
             // Simple formatting
             const formattedText = responseText
@@ -1378,14 +1443,14 @@
 
             const responseContainer = document.getElementById(`response-${newNodeId}`);
             if(responseContainer) {
-                responseContainer.innerHTML = `<p>${formattedText}</p>`;
-                
-                // Re-run layout because height changed
-                if (currentRootId === 'A') {
-                    runReflow(newNode);
-                } else {
-                    reflowFocusedView(document.getElementById(currentRootId));
-                }
+                responseContainer.querySelector('.node-response-content').innerHTML = formattedText;
+            }
+            
+            // Reflow again after content update
+            if (currentRootId === 'A') {
+                runReflow(newNode);
+            } else {
+                reflowFocusedView(document.getElementById(currentRootId));
             }
         } 
 
@@ -1414,18 +1479,9 @@
             if (parentNode) {
                 const currentRootId = viewHistory[viewHistory.length - 1];
                 if (currentRootId === 'A') {
-                    // In global view, reflow from the parent
                     runReflow(parentNode);
                 } else {
-                    // In focused view, reflow the current root
-                    const rootNode = document.getElementById(currentRootId);
-                    if (rootNode) reflowFocusedView(rootNode);
-                }
-            } else {
-                // If we removed the root (A) or a top-level node with no parent
-                if (nodeEl.id === 'A') {
-                    // Just clear lines, maybe show a "Reset" button later
-                    requestAnimationFrame(updateAllLines);
+                    reflowFocusedView(document.getElementById(currentRootId));
                 }
             }
             
@@ -1435,30 +1491,45 @@
 
         // --- Start Screen Logic ---
         startBtn.addEventListener('click', async () => {
+            console.log("[StartBtn] Clicked");
             const prompt = startPromptInput.value.trim();
-            if (!prompt) return;
+            console.log("[StartBtn] Prompt value:", prompt);
+            
+            if (!prompt) {
+                console.warn("[StartBtn] Prompt is empty");
+                return;
+            }
             
             startBtn.disabled = true;
             startBtn.textContent = "Generating...";
             
             let attachment = null;
             if (startFileInput.files.length > 0) {
+                console.log("[StartBtn] Reading file attachment...");
                 try {
                     attachment = await fileToBase64(startFileInput.files[0]);
+                    console.log("[StartBtn] File attached:", attachment.name);
                 } catch (e) {
-                    console.error("File read error:", e);
+                    console.error("[StartBtn] File read error:", e);
                 }
             }
 
-            await createRootNode(prompt, attachment);
-            
-            startScreen.style.display = 'none';
+            console.log("[StartBtn] Calling createRootNode...");
+            try {
+                await createRootNode(prompt, attachment);
+                console.log("[StartBtn] createRootNode completed");
+                startScreen.style.display = 'none';
+            } catch (error) {
+                console.error("[StartBtn] Error creating root node:", error);
+                startBtn.disabled = false;
+                startBtn.textContent = "Start Mapping";
+                alert("Error creating map: " + error.message);
+            }
         });
 
         async function createRootNode(promptText, attachment = null) {
              const newNodeId = 'A';
              
-             // Create Node HTML (similar to createBranchNode but for root)
              const newNode = document.createElement('div');
              newNode.id = newNodeId;
              newNode.className = 'chat-node';
@@ -1467,34 +1538,45 @@
              newNode.dataset.branchId = 'A';
              newNode.dataset.childCounter = "0";
              newNode.dataset.parentId = ""; // Root has no parent
+             newNode.dataset.context = encodeURIComponent("Start of conversation");
 
              let attachmentHTML = "";
              if (attachment) {
                  if (attachment.mimeType.startsWith('image/')) {
                      attachmentHTML = `<img src="data:${attachment.mimeType};base64,${attachment.data}" style="max-width: 100%; max-height: 150px; border-radius: 8px; margin-top: 8px; display: block;">`;
                  } else {
-                     attachmentHTML = `<div style="margin-top: 8px; font-size: 0.8rem; color: #aaa;">📎 Attached File (${attachment.mimeType})</div>`;
+                     attachmentHTML = `<div style="background:#333; padding:8px; border-radius:6px; margin-top:8px; font-size:0.8rem;">📎 ${attachment.name}</div>`;
                  }
              }
 
              newNode.innerHTML = `
-                <!-- NEW: Collapse Button -->
                 <button class="node-btn node-collapse-btn" title="Collapse/Expand Branch">-</button>
-                <!-- NEW: Root Button -->
                 <button class="node-btn node-root-btn" title="Focus on this node" data-node-id="${newNodeId}">◉</button>
-                <!-- NEW: Remove Button -->
                 <button class="node-btn node-remove-btn" title="Remove Node">×</button>
 
-                <div class="node-prompt">
-                    <p>You</p>
-                    <p class="prompt-text">${promptText}</p>
-                    ${attachmentHTML}
-                </div>
-                <div class="node-response">
-                    <p>Gemini</p>
-                    <div class="node-response-content" id="response-${newNodeId}">
-                        <p><span style="color: #888;">Thinking...</span></p>
+                <div class="node-content-wrapper">
+                    <div class="node-prompt">
+                        <p>You (Start)</p>
+                        <p class="prompt-text">${promptText}</p>
+                        ${attachmentHTML}
                     </div>
+                    <div class="node-response" id="response-${newNodeId}">
+                        <p>Gemini:</p>
+                        <div class="node-response-content">Generating...</div>
+                    </div>
+                </div>
+
+                <div class="node-reprompt-form" style="display:none">
+                    <textarea class="reprompt-input" placeholder="Enter new prompt..."></textarea>
+                    <div class="reprompt-actions">
+                        <button class="confirm-reprompt">Generate</button>
+                        <button class="cancel-reprompt">Cancel</button>
+                    </div>
+                </div>
+
+                <div class="node-footer">
+                    <button class="node-action-btn reprompt-btn">Re-prompt</button>
+                    <button class="node-action-btn undo-btn" style="display:none">Undo</button>
                 </div>
             `;
             
@@ -1513,10 +1595,10 @@
 
             const responseContainer = document.getElementById(`response-${newNodeId}`);
             if(responseContainer) {
-                responseContainer.innerHTML = `<p>${formattedText}</p>`;
-                // Force reflow/layout update if needed
-                runReflow(newNode);
+                responseContainer.querySelector('.node-response-content').innerHTML = formattedText;
             }
+            
+            runReflow(newNode);
         }
 
         // --- File Input Listeners ---
@@ -1542,17 +1624,115 @@
                 const reader = new FileReader();
                 reader.readAsDataURL(file);
                 reader.onload = () => {
-                    // Remove the "data:*/*;base64," prefix
                     const base64String = reader.result.split(',')[1];
                     resolve({
                         mimeType: file.type,
-                        data: base64String
+                        data: base64String,
+                        name: file.name
                     });
                 };
                 reader.onerror = error => reject(error);
             });
         }
-    </script>
 
+        // --- NEW: Reprompt Event Listeners ---
+        canvas.addEventListener('click', async (e) => {
+            // Re-prompt Button
+            if (e.target.classList.contains('reprompt-btn')) {
+                const node = e.target.closest('.chat-node');
+                const promptTextEl = node.querySelector('.prompt-text');
+                const currentPrompt = promptTextEl ? promptTextEl.textContent : "";
+                
+                node.querySelector('.node-content-wrapper').style.display = 'none';
+                node.querySelector('.node-reprompt-form').style.display = 'block';
+                node.querySelector('.reprompt-input').value = currentPrompt;
+                node.querySelector('.node-footer').style.display = 'none'; 
+            }
+
+            // Cancel Reprompt
+            if (e.target.classList.contains('cancel-reprompt')) {
+                const node = e.target.closest('.chat-node');
+                node.querySelector('.node-reprompt-form').style.display = 'none';
+                node.querySelector('.node-content-wrapper').style.display = 'block';
+                node.querySelector('.node-footer').style.display = 'flex';
+            }
+
+            // Confirm Reprompt
+            if (e.target.classList.contains('confirm-reprompt')) {
+                const node = e.target.closest('.chat-node');
+                const input = node.querySelector('.reprompt-input');
+                const newPrompt = input.value.trim();
+                if (!newPrompt) return;
+
+                // Save State for Undo
+                const contentWrapper = node.querySelector('.node-content-wrapper');
+                const previousState = {
+                    html: contentWrapper.innerHTML
+                };
+                node.dataset.previousState = JSON.stringify(previousState);
+
+                // UI Updates
+                node.querySelector('.node-reprompt-form').style.display = 'none';
+                contentWrapper.style.display = 'block';
+                node.querySelector('.node-footer').style.display = 'flex';
+                
+                // Update Prompt Text
+                const promptTextEl = node.querySelector('.prompt-text');
+                if (promptTextEl) promptTextEl.textContent = newPrompt;
+                
+                // Set Loading State
+                const responseContentEl = node.querySelector('.node-response-content');
+                responseContentEl.textContent = "Regenerating...";
+
+                // API Call
+                const context = decodeURIComponent(node.dataset.context || "");
+                
+                let apiContext = context;
+                if (node.dataset.parentId) {
+                     const parentNode = document.getElementById(node.dataset.parentId);
+                     if (parentNode) {
+                        const fullParentText = parentNode.querySelector('.node-response-content') ? parentNode.querySelector('.node-response-content').innerText : "";
+                        apiContext = `Full Context of Parent Node:\n"${fullParentText}"\n\nSpecific Highlighted Text:\n"${context}"`;
+                     }
+                }
+
+                const responseText = await callGeminiAPI(newPrompt, apiContext, null); 
+                
+                const formattedText = responseText
+                    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                    .replace(/\n/g, '<br>');
+                
+                responseContentEl.innerHTML = formattedText;
+
+                // Show Undo Button
+                node.querySelector('.undo-btn').style.display = 'inline-block';
+                
+                // Trigger Reflow
+                const currentRootId = viewHistory[viewHistory.length - 1];
+                if (currentRootId === 'A') {
+                    runReflow(node);
+                } else {
+                    reflowFocusedView(document.getElementById(currentRootId));
+                }
+            }
+
+            // Undo Button
+            if (e.target.classList.contains('undo-btn')) {
+                const node = e.target.closest('.chat-node');
+                if (node.dataset.previousState) {
+                    const state = JSON.parse(node.dataset.previousState);
+                    node.querySelector('.node-content-wrapper').innerHTML = state.html;
+                    node.querySelector('.undo-btn').style.display = 'none';
+                    delete node.dataset.previousState;
+                    
+                    const currentRootId = viewHistory[viewHistory.length - 1];
+                    if (currentRootId === 'A') {
+                        runReflow(node);
+                    } else {
+                        reflowFocusedView(document.getElementById(currentRootId));
+                    }
+                }
+            }
+        });    </script>
 </body>
 </html>
