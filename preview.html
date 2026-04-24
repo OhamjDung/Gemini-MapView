@@ -12,14 +12,31 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     
     <style>
+        :root {
+            --clay-surface: rgba(247, 241, 231, 0.96);
+            --clay-border: rgba(239, 231, 218, 0.88);
+            --clay-shadow: 35px 35px 68px 0px rgba(145, 192, 255, 0.5),
+                           inset -5px -5px 16px 0px rgba(145, 192, 255, 0.6),
+                           inset 0px 11px 28px 0px rgb(252, 248, 242);
+            --clay-shadow-soft: 22px 22px 44px 0px rgba(145, 192, 255, 0.34),
+                                inset -4px -4px 12px 0px rgba(145, 192, 255, 0.45),
+                                inset 0px 8px 22px 0px rgb(250, 245, 238);
+            --clay-text: #5f5a52;
+            --clay-muted: #8f8678;
+            --clay-accent: #5d94f2;
+            --clay-accent-strong: #4d86e8;
+            --clay-danger: #d7657d;
+            --clay-bg-a: #ebe2d4;
+            --clay-bg-b: #f7f1e8;
+        }
+
         body {
             font-family: 'Inter', sans-serif;
-            color: #e3e3e3;
-            /* Use a dark, subtly patterned background for the viewport */
-            background-color: #131314;
-            background-image: linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-                              linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
-            background-size: 20px 20px;
+            color: var(--clay-text);
+            background:
+                radial-gradient(circle at top left, rgba(145, 192, 255, 0.42), transparent 34%),
+                radial-gradient(circle at bottom right, rgba(248, 242, 234, 0.92), transparent 42%),
+                linear-gradient(135deg, var(--clay-bg-a), var(--clay-bg-b));
             overflow: hidden; /* Prevent body scroll */
         }
 
@@ -29,37 +46,41 @@
             top: 0;
             left: 0;
             width: 100%;
-            background-color: rgba(30, 30, 33, 0.9);
-            border-bottom: 1px solid #4a4a50;
+            background-color: rgba(246, 239, 229, 0.8);
+            border-bottom: 1px solid rgba(239, 231, 218, 0.72);
             padding: 8px 16px;
             display: flex;
             align-items: center;
             flex-wrap: wrap;
             gap: 8px;
             z-index: 300;
-            backdrop-filter: blur(5px);
+            backdrop-filter: blur(8px);
+            box-shadow: 0 18px 38px rgba(145, 192, 255, 0.22);
         }
         .history-link {
-            color: #a0c4ff;
+            color: var(--clay-accent-strong);
             text-decoration: none;
-            font-weight: 500;
+            font-weight: 600;
             font-size: 0.9rem;
-            padding: 4px 8px;
-            border-radius: 6px;
+            padding: 6px 10px;
+            border-radius: 999px;
             cursor: pointer;
-            transition: background-color 0.2s;
+            transition: all 0.2s;
+            background: rgba(247, 241, 231, 0.72);
+            border: 1px solid rgba(239, 231, 218, 0.84);
+            box-shadow: var(--clay-shadow-soft);
         }
         .history-link:hover {
-            background-color: rgba(160, 196, 255, 0.1);
+            background-color: rgba(247, 241, 231, 0.94);
         }
         .history-link[disabled] {
-            color: #e3e3e3;
+            color: var(--clay-text);
             font-weight: 600;
-            background-color: rgba(160, 196, 255, 0.2);
+            background-color: rgba(247, 241, 231, 0.96);
             cursor: default;
         }
         .history-separator {
-            color: #777;
+            color: var(--clay-muted);
             font-size: 0.9rem;
             user-select: none;
         }
@@ -110,13 +131,12 @@
         .chat-node {
             position: absolute;
             width: 350px;
-            background-color: #2a2a2e;
-            border: 1px solid #4a4a50;
-            border-radius: 12px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            background-color: var(--clay-surface);
+            border: 1px solid var(--clay-border);
+            border-radius: 23px;
+            backdrop-filter: blur(8px);
+            box-shadow: var(--clay-shadow);
             overflow: visible; /* --- UPDATED: Allow buttons to show --- */
-            /* Add a subtle glow */
-            box-shadow: 0 0 15px rgba(130, 170, 255, 0.1);
             z-index: 10; /* --- UPDATED: Ensure nodes are above lines --- */
             transition: width 0.2s ease, height 0.2s ease; /* --- NEW: Animate layout changes (removed top/left) --- */
         }
@@ -126,9 +146,9 @@
             position: absolute;
             width: 24px;
             height: 24px;
-            background-color: rgba(0,0,0,0.3);
-            color: #ccc;
-            border: 1px solid #555;
+            background-color: rgba(247, 241, 231, 0.94);
+            color: var(--clay-accent-strong);
+            border: 1px solid rgba(239, 231, 218, 0.88);
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -138,11 +158,12 @@
             cursor: pointer;
             z-index: 20;
             transition: all 0.2s;
+            box-shadow: var(--clay-shadow-soft);
         }
         .node-btn:hover {
-            background-color: rgba(0,0,0,0.6);
-            color: white;
-            border-color: #777;
+            background-color: rgba(247, 241, 231, 1);
+            color: var(--clay-text);
+            border-color: rgba(239, 231, 218, 1);
             transform: scale(1.1);
         }
 
@@ -168,22 +189,22 @@
             top: 8px;
             right: 8px;
             font-size: 1.1rem;
-            color: #ff6b6b;
-            border-color: #5a2a2a;
+            color: var(--clay-danger);
+            border-color: rgba(255, 255, 255, 0.75);
             line-height: 0.8;
             padding-bottom: 3px;
         }
         .node-remove-btn:hover {
-            background-color: rgba(255, 107, 107, 0.15);
-            color: #ff8888;
-            border-color: #ff6b6b;
+            background-color: rgba(255, 255, 255, 1);
+            color: #bf4762;
+            border-color: rgba(255, 255, 255, 0.9);
         }
 
         /* --- NEW: Collapsed Node Styles --- */
         .chat-node.collapsed {
             width: 250px; /* Shrink width */
             height: auto; /* Shrink height */
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            box-shadow: var(--clay-shadow-soft);
         }
         .chat-node.collapsed .node-response,
         .chat-node.collapsed .node-prompt p.prompt-text,
@@ -199,19 +220,19 @@
         /* User's prompt section within a node */
         .node-prompt {
             padding: 12px 16px;
-            background-color: #3a3a40;
-            border-bottom: 1px solid #4a4a50;
+            background: linear-gradient(180deg, rgba(248, 243, 235, 0.96), rgba(239, 231, 219, 0.96));
+            border-bottom: 1px solid rgba(145, 192, 255, 0.25);
             /* --- NEW: Make room for buttons --- */
             padding-left: 40px;
             padding-right: 40px;
         }
         .node-prompt p:first-child {
             font-weight: 600;
-            color: #c5c5c5;
+            color: var(--clay-muted);
         }
         .node-prompt p.prompt-text {
             font-style: italic;
-            color: #ffffff;
+            color: var(--clay-text);
         }
 
         /* AI's response section within a node */
@@ -220,7 +241,7 @@
         }
         .node-response p:first-child {
             font-weight: 600;
-            color: #e3e3e3; /* UPDATED: Changed from blue-ish to white-ish */
+            color: var(--clay-accent-strong);
             margin-bottom: 8px;
         }
 
@@ -228,9 +249,62 @@
         .node-response-content {
             font-size: 0.9rem;
             line-height: 1.5;
+            color: var(--clay-text);
             /* This ensures the user can select the text */
             user-select: text; 
             cursor: text;
+        }
+        .response-paragraph {
+            position: relative;
+            margin: 0 0 10px;
+            padding: 10px 42px 10px 12px;
+            border-radius: 16px;
+            transition: background-color 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease;
+        }
+        .response-paragraph:last-child {
+            margin-bottom: 0;
+        }
+        .response-paragraph:hover {
+            background-color: rgba(128, 128, 128, 0.12);
+            box-shadow: inset 0 0 0 1px rgba(128, 128, 128, 0.18);
+            transform: translateY(-2px);
+        }
+        .response-paragraph.is-selected {
+            background-color: rgba(128, 128, 128, 0.16);
+            box-shadow: inset 0 0 0 1px rgba(93, 148, 242, 0.28), 0 10px 24px rgba(145, 192, 255, 0.16);
+        }
+        .paragraph-branch-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 26px;
+            height: 26px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid rgba(239, 231, 218, 0.88);
+            border-radius: 999px;
+            background: rgba(247, 241, 231, 0.94);
+            color: var(--clay-muted);
+            box-shadow: var(--clay-shadow-soft);
+            cursor: pointer;
+            opacity: 0;
+            pointer-events: none;
+            transform: scale(0.9);
+            transition: opacity 0.18s ease, transform 0.18s ease, color 0.18s ease;
+        }
+        .response-paragraph:hover .paragraph-branch-btn,
+        .response-paragraph:focus-within .paragraph-branch-btn,
+        .response-paragraph.is-selected .paragraph-branch-btn {
+            opacity: 1;
+            pointer-events: auto;
+            transform: scale(1);
+        }
+        .paragraph-branch-btn:hover {
+            color: var(--clay-accent-strong);
+        }
+        .response-paragraph.is-selected .paragraph-branch-btn {
+            color: var(--clay-accent-strong);
         }
         
         .instructions {
@@ -238,47 +312,51 @@
             bottom: 20px;
             left: 50%;
             transform: translateX(-50%);
-            background-color: rgba(0, 0, 0, 0.7);
-            color: white;
+            background-color: rgba(247, 241, 231, 0.86);
+            color: var(--clay-text);
             padding: 10px 20px;
-            border-radius: 8px;
+            border-radius: 18px;
             font-size: 0.9rem;
             z-index: 100;
             pointer-events: none;
+            border: 1px solid rgba(239, 231, 218, 0.9);
+            box-shadow: var(--clay-shadow-soft);
+            backdrop-filter: blur(8px);
         }
 
         /* --- UPDATED: New styles for the highlight confirmation popup --- */
         #highlight-popup {
             position: absolute; /* UPDATED: Was 'fixed', now 'absolute' to move with canvas */
             display: none; /* Hidden by default */
-            background-color: #2a2a2e; /* Match node background */
-            border: 1px solid #4a4a50; /* Match node border */
-            color: white;
+            background-color: var(--clay-surface); /* Match node background */
+            border: 1px solid var(--clay-border); /* Match node border */
+            color: var(--clay-text);
             padding: 12px;
-            border-radius: 10px;
+            border-radius: 23px;
             font-size: 0.9rem;
             font-weight: 500;
             z-index: 200;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            box-shadow: var(--clay-shadow);
             transition: opacity 0.1s ease-out;
             width: 300px; /* Give it a fixed width */
             /* UPDATED: Was 'display: flex' in thought, but must be 'none' by default */
             flex-direction: column; /* Stack items vertically */
             gap: 10px; /* Add spacing between items */
             transform-origin: top left; /* NEW: For scaling from top-left corner */
+            backdrop-filter: blur(8px);
         }
 
         .popup-highlight-context {
             font-size: 0.8rem;
-            color: #c5c5c5;
+            color: var(--clay-muted);
         }
         .popup-highlight-context strong {
-            color: #e0e0e0;
+            color: var(--clay-text);
         }
 
         #popup-highlighted-text {
             font-style: italic;
-            color: #ffffff;
+            color: var(--clay-text);
             /* Add text truncation for long highlights */
             display: -webkit-box;
             -webkit-line-clamp: 2;
@@ -291,28 +369,30 @@
         #popup-prompt-input {
             width: 100%;
             padding: 8px 10px;
-            border-radius: 6px;
-            background-color: #3a3a40;
-            border: 1px solid #4a4a50;
-            color: white;
+            border-radius: 16px;
+            background-color: rgba(245, 239, 229, 0.92);
+            border: 1px solid rgba(239, 231, 218, 0.88);
+            color: var(--clay-text);
             font-size: 0.9rem;
+            box-shadow: inset -3px -3px 10px rgba(145, 192, 255, 0.2), inset 0px 8px 18px rgba(252, 247, 240, 0.92);
         }
         #popup-prompt-input::placeholder {
-            color: #888;
+            color: var(--clay-muted);
         }
 
         #popup-create-branch-btn {
-            background-color: #1a73e8; /* A bright blue */
+            background-color: var(--clay-accent); /* A bright blue */
             color: white;
             padding: 8px 12px;
-            border-radius: 6px;
+            border-radius: 16px;
             font-weight: 500;
             cursor: pointer;
             text-align: center;
-            border: none; /* Ensure no default button border */
+            border: 1px solid rgba(239, 231, 218, 0.88); /* Ensure no default button border */
+            box-shadow: var(--clay-shadow-soft);
         }
         #popup-create-branch-btn:hover {
-            background-color: #2a83f8;
+            background-color: var(--clay-accent-strong);
         }
         /* --- END OF POPUP STYLE UPDATES --- */
 
@@ -321,44 +401,46 @@
         /* --- NEW: Node Footer & Reprompt Styles --- */
         .node-footer {
             padding: 8px 16px;
-            border-top: 1px solid #4a4a50;
+            border-top: 1px solid rgba(145, 192, 255, 0.2);
             display: flex;
             gap: 10px;
             justify-content: flex-end;
-            background-color: #2a2a2e; /* Match node bg */
-            border-bottom-left-radius: 12px;
-            border-bottom-right-radius: 12px;
+            background-color: rgba(245, 239, 229, 0.88); /* Match node bg */
+            border-bottom-left-radius: 23px;
+            border-bottom-right-radius: 23px;
         }
         .node-action-btn {
-            background: transparent;
-            border: 1px solid #555;
-            color: #ccc;
+            background: rgba(247, 241, 231, 0.92);
+            border: 1px solid rgba(239, 231, 218, 0.88);
+            color: var(--clay-accent-strong);
             padding: 4px 8px;
-            border-radius: 4px;
+            border-radius: 14px;
             font-size: 0.8rem;
             cursor: pointer;
             transition: all 0.2s;
+            box-shadow: var(--clay-shadow-soft);
         }
         .node-action-btn:hover {
-            background-color: rgba(255, 255, 255, 0.1);
-            color: white;
+            background-color: rgba(247, 241, 231, 1);
+            color: var(--clay-text);
         }
         .node-reprompt-form {
             padding: 12px;
-            background-color: #3a3a40;
-            border-top: 1px solid #4a4a50;
+            background-color: rgba(245, 239, 229, 0.88);
+            border-top: 1px solid rgba(145, 192, 255, 0.2);
         }
         .reprompt-input {
             width: 100%;
-            background: #2a2a2e;
-            border: 1px solid #4a4a50;
-            color: white;
+            background: rgba(247, 241, 231, 0.92);
+            border: 1px solid rgba(239, 231, 218, 0.88);
+            color: var(--clay-text);
             padding: 8px;
-            border-radius: 6px;
+            border-radius: 16px;
             font-size: 0.9rem;
             resize: vertical;
             min-height: 60px;
             margin-bottom: 8px;
+            box-shadow: inset -3px -3px 10px rgba(145, 192, 255, 0.2), inset 0px 8px 18px rgba(252, 247, 240, 0.92);
         }
         .reprompt-actions {
             display: flex;
@@ -366,22 +448,24 @@
             justify-content: flex-end;
         }
         .confirm-reprompt {
-            background-color: #1a73e8;
+            background-color: var(--clay-accent);
             color: white;
-            border: none;
+            border: 1px solid rgba(239, 231, 218, 0.88);
             padding: 6px 12px;
-            border-radius: 4px;
+            border-radius: 14px;
             cursor: pointer;
             font-size: 0.8rem;
+            box-shadow: var(--clay-shadow-soft);
         }
         .cancel-reprompt {
-            background-color: transparent;
-            border: 1px solid #555;
-            color: #ccc;
+            background-color: rgba(247, 241, 231, 0.92);
+            border: 1px solid rgba(239, 231, 218, 0.88);
+            color: var(--clay-muted);
             padding: 6px 12px;
-            border-radius: 4px;
+            border-radius: 14px;
             cursor: pointer;
             font-size: 0.8rem;
+            box-shadow: var(--clay-shadow-soft);
         }
         /* --- END: Node Footer Styles --- */
     </style>
@@ -394,7 +478,7 @@
             <!-- History links will be added here by JS -->
         </div>
         <div style="margin-left: auto; display: flex; gap: 8px; align-items: center;">
-             <select id="gemini-model-select" style="background: #2a2a2e; border: 1px solid #4a4a50; color: white; padding: 4px 8px; border-radius: 4px; font-size: 0.8rem;">
+             <select id="gemini-model-select" style="background: rgba(255, 255, 255, 0.9); border: 1px solid rgba(255, 255, 255, 0.72); color: #33517a; padding: 6px 10px; border-radius: 18px; font-size: 0.8rem; backdrop-filter: blur(8px); box-shadow: 22px 22px 44px 0px rgba(145, 192, 255, 0.2), inset -4px -4px 12px 0px rgba(145, 192, 255, 0.32), inset 0px 8px 22px 0px rgb(255, 255, 255);">
                 <option value="gemini-2.5-flash">Gemini 2.5 Flash</option>
                 <option value="gemini-2.0-flash">Gemini 2.0 Flash</option>
                 <option value="gemini-1.5-flash-latest">Gemini 1.5 Flash (Latest)</option>
@@ -403,12 +487,12 @@
                 <option value="gemini-1.5-pro">Gemini 1.5 Pro</option>
                 <option value="gemini-pro">Gemini Pro</option>
              </select>
-             <input type="password" id="gemini-api-key" placeholder="Gemini API Key" style="background: #2a2a2e; border: 1px solid #4a4a50; color: white; padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; width: 200px;">
+             <input type="password" id="gemini-api-key" placeholder="Gemini API Key" style="background: rgba(255, 255, 255, 0.9); border: 1px solid rgba(255, 255, 255, 0.72); color: #33517a; padding: 6px 10px; border-radius: 18px; font-size: 0.8rem; width: 200px; backdrop-filter: blur(8px); box-shadow: 22px 22px 44px 0px rgba(145, 192, 255, 0.2), inset -4px -4px 12px 0px rgba(145, 192, 255, 0.32), inset 0px 8px 22px 0px rgb(255, 255, 255);">
         </div>
     </div>
 
     <!-- Start Screen -->
-    <div id="start-screen" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #131314; z-index: 250; display: flex; flex-direction: column; align-items: center; justify-content: center; padding-top: 50px;">
+    <div id="start-screen" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, #e7f1ff, #f8fbff); z-index: 250; display: none; flex-direction: column; align-items: center; justify-content: center; padding-top: 50px;">
         <h1 style="font-size: 2rem; font-weight: 700; margin-bottom: 2rem; color: #e3e3e3;">Gemini Chat Map</h1>
         <div style="width: 100%; max-width: 600px; padding: 0 20px;">
             <textarea id="start-prompt-input" placeholder="What do you want to explore?" style="width: 100%; padding: 16px; background: #2a2a2e; border: 1px solid #4a4a50; border-radius: 12px; color: white; font-size: 1.1rem; resize: none; height: 120px; margin-bottom: 16px; font-family: inherit;"></textarea>
@@ -504,6 +588,44 @@
         const popupFileInput = document.getElementById('popup-file-input');
         const popupFileName = document.getElementById('popup-file-name');
         const NS = 'http://www.w3.org/2000/svg'; // SVG Namespace
+        const useMockData = true;
+        const mockSeed = {
+            rootPrompt: "Help me turn this Gemini conversation mapper into something people would actually want to use every day.",
+            rootResponse: "Start by making the experience feel immediate and legible. Users should land directly in the map, understand what each node represents, and be able to jump between the original conversation and their visual workspace without friction.\n\nFocus the first version on three promises:\n1. The map mirrors the conversation clearly.\n2. Branches make exploration easier.\n3. Returning to the live chat feels effortless.",
+            branches: [
+                {
+                    parentId: "A",
+                    highlight: "Users should land directly in the map, understand what each node represents, and be able to jump between the original conversation and their visual workspace without friction.",
+                    prompt: "Turn that into a concrete onboarding flow.",
+                    response: "Use a soft first-run state with one sentence of orientation, then reveal the root node and its first branch immediately. Add a short hint bar for pan and zoom, and make the first obvious action either 'Follow this branch' or 'Jump to source chat'."
+                },
+                {
+                    parentId: "A",
+                    highlight: "Focus the first version on three promises.",
+                    prompt: "Break those promises into product requirements.",
+                    response: "Requirement one: every node must clearly show prompt and response. Requirement two: branches must be easy to create and easy to collapse. Requirement three: the current view must always preserve a path back to the original thread."
+                },
+                {
+                    parentId: "A1",
+                    highlight: "Use a soft first-run state with one sentence of orientation.",
+                    prompt: "What should that sentence actually say?",
+                    response: "Try: 'This map turns your Gemini conversation into a workspace you can pan, branch, and revisit.' It explains the value without sounding technical."
+                },
+                {
+                    parentId: "A1",
+                    highlight: "Add a short hint bar for pan and zoom.",
+                    prompt: "What controls should the hint bar mention?",
+                    response: "Mention only the essentials: drag to pan, scroll to zoom, and use WASD when you are not typing or highlighting text. Anything more than that starts to feel like documentation instead of guidance."
+                },
+                {
+                    parentId: "A2",
+                    highlight: "Requirement two: branches must be easy to create and easy to collapse.",
+                    prompt: "What would make branching feel delightful instead of technical?",
+                    response: "Treat branching like a natural continuation of reading. The highlight popup should feel light, inviting, and fast. Users should never feel like they are filling out a form just to ask a follow-up."
+                }
+            ]
+        };
+        let mockResponseQueue = [];
 
         // Load API Key & Model
         if(localStorage.getItem('gemini_api_key')) {
@@ -531,10 +653,14 @@
         let scale = 1;
         const minScale = 0.2;
         const maxScale = 3;
-        const keyboardPanStep = 60;
+        const keyboardPanSpeed = 720;
+        const activePanKeys = new Set();
+        let keyboardPanFrame = null;
+        let lastKeyboardPanTime = 0;
 
         let currentParentNode = null;
         let currentSelectedText = "";
+        let selectedParagraphElements = [];
 
         // --- NEW: History State ---
         let viewHistory = []; // Start empty
@@ -554,6 +680,179 @@
 
             const selection = window.getSelection();
             return !!selection && selection.toString().trim().length > 0;
+        }
+
+        function getKeyboardDirection() {
+            let dx = 0;
+            let dy = 0;
+
+            if (activePanKeys.has('a')) dx += 1;
+            if (activePanKeys.has('d')) dx -= 1;
+            if (activePanKeys.has('w')) dy += 1;
+            if (activePanKeys.has('s')) dy -= 1;
+
+            if (dx !== 0 && dy !== 0) {
+                const normalized = Math.SQRT1_2;
+                dx *= normalized;
+                dy *= normalized;
+            }
+
+            return { dx, dy };
+        }
+
+        function stopKeyboardPanLoop() {
+            if (keyboardPanFrame !== null) {
+                cancelAnimationFrame(keyboardPanFrame);
+                keyboardPanFrame = null;
+            }
+            lastKeyboardPanTime = 0;
+        }
+
+        function runKeyboardPanFrame(timestamp) {
+            if (shouldIgnoreKeyboardPan() || activePanKeys.size === 0) {
+                stopKeyboardPanLoop();
+                return;
+            }
+
+            if (!lastKeyboardPanTime) {
+                lastKeyboardPanTime = timestamp;
+            }
+
+            const deltaSeconds = (timestamp - lastKeyboardPanTime) / 1000;
+            lastKeyboardPanTime = timestamp;
+
+            const { dx, dy } = getKeyboardDirection();
+            if (dx === 0 && dy === 0) {
+                stopKeyboardPanLoop();
+                return;
+            }
+
+            canvasX += dx * keyboardPanSpeed * deltaSeconds;
+            canvasY += dy * keyboardPanSpeed * deltaSeconds;
+            justPanned = true;
+            applyTransform();
+
+            keyboardPanFrame = requestAnimationFrame(runKeyboardPanFrame);
+        }
+
+        function ensureKeyboardPanLoop() {
+            if (keyboardPanFrame === null) {
+                keyboardPanFrame = requestAnimationFrame(runKeyboardPanFrame);
+            }
+        }
+
+        function getNextMockResponse(prompt, context) {
+            if (mockResponseQueue.length > 0) {
+                return mockResponseQueue.shift();
+            }
+
+            const shortContext = (context || "").replace(/\s+/g, ' ').trim().slice(0, 120);
+            return `Mock response for: "${prompt}"\n\nThis preview is running in mock-data mode so we can refine layout and flow without needing live API calls.\n\nContext snapshot: ${shortContext || 'No context available.'}`;
+        }
+
+        function clearSelectedParagraphs() {
+            selectedParagraphElements.forEach((paragraphEl) => {
+                paragraphEl.classList.remove('is-selected');
+            });
+            selectedParagraphElements = [];
+        }
+
+        function toggleParagraphSelection(paragraphEl) {
+            if (!paragraphEl) return;
+
+            if (selectedParagraphElements.includes(paragraphEl)) {
+                paragraphEl.classList.remove('is-selected');
+                selectedParagraphElements = selectedParagraphElements.filter((item) => item !== paragraphEl);
+                return;
+            }
+
+            paragraphEl.classList.add('is-selected');
+            selectedParagraphElements.push(paragraphEl);
+        }
+
+        function getSelectedParagraphText(fallbackParagraphEl = null) {
+            const paragraphElements = selectedParagraphElements.length > 0
+                ? selectedParagraphElements
+                : (fallbackParagraphEl ? [fallbackParagraphEl] : []);
+
+            return paragraphElements
+                .map((paragraphEl) => decodeURIComponent(paragraphEl.dataset.paragraphText || '').trim())
+                .filter(Boolean)
+                .join('\n\n');
+        }
+
+        function escapeHtml(text) {
+            return String(text)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
+        function formatInlineText(text) {
+            return escapeHtml(text).replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>');
+        }
+
+        function formatResponseContent(responseText) {
+            const paragraphs = String(responseText)
+                .split(/\n\s*\n/)
+                .map(paragraph => paragraph.trim())
+                .filter(Boolean);
+
+            const safeParagraphs = paragraphs.length > 0 ? paragraphs : [String(responseText).trim()];
+
+            return safeParagraphs.map((paragraph) => {
+                const encodedParagraph = encodeURIComponent(paragraph);
+                return `
+                    <div class="response-paragraph" data-paragraph-text="${encodedParagraph}">
+                        <button class="paragraph-branch-btn" type="button" title="Ask about this paragraph">+</button>
+                        ${formatInlineText(paragraph)}
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function openBranchPopup(parentNode, selectedText, anchorRect) {
+            if (!parentNode || !selectedText || !anchorRect) {
+                return;
+            }
+
+            currentParentNode = parentNode;
+            currentSelectedText = selectedText;
+            popupHighlightedTextEl.textContent = currentSelectedText;
+
+            const viewportRect = viewport.getBoundingClientRect();
+            const popupScreenX = anchorRect.left - viewportRect.left + (anchorRect.width / 2) - (popup.offsetWidth / 2);
+            const popupScreenY = anchorRect.bottom - viewportRect.top + 10;
+
+            const canvasPopupX = (popupScreenX - canvasX) / scale;
+            const canvasPopupY = (popupScreenY - canvasY) / scale;
+
+            popup.style.left = `${canvasPopupX}px`;
+            popup.style.top = `${canvasPopupY}px`;
+            popup.style.display = 'flex';
+            popupPromptInputEl.value = "";
+            popupPromptInputEl.focus();
+        }
+
+        async function seedMockMap() {
+            if (!useMockData || document.getElementById('A')) {
+                return;
+            }
+
+            mockResponseQueue = [
+                mockSeed.rootResponse,
+                ...mockSeed.branches.map(branch => branch.response)
+            ];
+
+            await createRootNode(mockSeed.rootPrompt);
+
+            for (const branch of mockSeed.branches) {
+                const parentNode = document.getElementById(branch.parentId);
+                if (!parentNode) continue;
+                await createBranchNode(parentNode, branch.highlight, branch.prompt);
+            }
         }
 
         // --- NEW: Reset View Function ---
@@ -658,32 +957,35 @@
         });
 
         document.addEventListener('keydown', (e) => {
-            if (shouldIgnoreKeyboardPan() || e.ctrlKey || e.metaKey || e.altKey) {
+            if (e.ctrlKey || e.metaKey || e.altKey) {
                 return;
             }
 
             const key = e.key.toLowerCase();
-            let didMove = false;
-
-            if (key === 'w') {
-                canvasY += keyboardPanStep;
-                didMove = true;
-            } else if (key === 's') {
-                canvasY -= keyboardPanStep;
-                didMove = true;
-            } else if (key === 'a') {
-                canvasX += keyboardPanStep;
-                didMove = true;
-            } else if (key === 'd') {
-                canvasX -= keyboardPanStep;
-                didMove = true;
+            if (!['w', 'a', 's', 'd'].includes(key) || shouldIgnoreKeyboardPan()) {
+                return;
             }
 
-            if (didMove) {
-                e.preventDefault();
-                justPanned = true;
-                applyTransform();
+            activePanKeys.add(key);
+            e.preventDefault();
+            ensureKeyboardPanLoop();
+        });
+
+        document.addEventListener('keyup', (e) => {
+            const key = e.key.toLowerCase();
+            if (!['w', 'a', 's', 'd'].includes(key)) {
+                return;
             }
+
+            activePanKeys.delete(key);
+            if (activePanKeys.size === 0) {
+                stopKeyboardPanLoop();
+            }
+        });
+
+        window.addEventListener('blur', () => {
+            activePanKeys.clear();
+            stopKeyboardPanLoop();
         });
 
 
@@ -700,31 +1002,15 @@
             const selectedText = selection.toString().trim();
 
             if (selectedText.length > 0 && responseContent) {
-                currentParentNode = responseContent.closest('.chat-node');
-                currentSelectedText = selectedText;
-                popupHighlightedTextEl.textContent = currentSelectedText;
-
                 const range = selection.getRangeAt(0);
                 const rect = range.getBoundingClientRect();
-                
-                // --- FIX: Use viewport rect to account for padding ---
-                const viewportRect = viewport.getBoundingClientRect();
-                const popupScreenX = rect.left - viewportRect.left + (rect.width / 2) - (popup.offsetWidth / 2);
-                const popupScreenY = rect.bottom - viewportRect.top + 10;
-
-                const canvasPopupX = (popupScreenX - canvasX) / scale;
-                const canvasPopupY = (popupScreenY - canvasY) / scale;
-
-                popup.style.left = `${canvasPopupX}px`;
-                popup.style.top = `${canvasPopupY}px`;
-                popup.style.display = 'flex';
-                popupPromptInputEl.value = ""; 
-                popupPromptInputEl.focus();
+                openBranchPopup(responseContent.closest('.chat-node'), selectedText, rect);
             } else {
                 if (!e.target.closest('#highlight-popup')) {
                     popup.style.display = 'none';
                     currentParentNode = null;
                     currentSelectedText = "";
+                    clearSelectedParagraphs();
                 }
             }
         });
@@ -747,10 +1033,36 @@
                 popup.style.display = 'none';
                 currentParentNode = null;
                 currentSelectedText = "";
+                clearSelectedParagraphs();
                 popupPromptInputEl.value = "";
                 popupFileInput.value = ""; // Clear file input
                 popupFileName.textContent = "";
             }
+        });
+
+        canvas.addEventListener('click', (e) => {
+            const paragraphBtn = e.target.closest('.paragraph-branch-btn');
+            const paragraphEl = e.target.closest('.response-paragraph');
+
+            if (e.shiftKey && paragraphEl) {
+                e.preventDefault();
+                e.stopPropagation();
+                window.getSelection().removeAllRanges();
+                toggleParagraphSelection(paragraphEl);
+                return;
+            }
+
+            if (!paragraphBtn) return;
+
+            const parentNode = paragraphBtn.closest('.chat-node');
+            if (!paragraphEl || !parentNode) return;
+
+            const paragraphText = getSelectedParagraphText(paragraphEl);
+            if (!paragraphText) return;
+
+            window.getSelection().removeAllRanges();
+            justPanned = false;
+            openBranchPopup(parentNode, paragraphText, paragraphEl.getBoundingClientRect());
         });
 
 
@@ -1297,6 +1609,10 @@
         // --- --- --- --- --- --- --- --- --- --- --- ---
         
         async function callGeminiAPI(prompt, context, attachment = null) {
+            if (useMockData) {
+                return getNextMockResponse(prompt, context);
+            }
+
             const apiKey = localStorage.getItem('gemini_api_key');
             const model = localStorage.getItem('gemini_model') || 'gemini-2.5-flash';
             
@@ -1477,13 +1793,9 @@
             const responseText = await callGeminiAPI(apiPrompt, combinedContext, attachment);
             
             // Simple formatting
-            const formattedText = responseText
-                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-                .replace(/\n/g, '<br>');
-
             const responseContainer = document.getElementById(`response-${newNodeId}`);
             if(responseContainer) {
-                responseContainer.querySelector('.node-response-content').innerHTML = formattedText;
+                responseContainer.querySelector('.node-response-content').innerHTML = formatResponseContent(responseText);
             }
             
             // Reflow again after content update
@@ -1499,9 +1811,10 @@
         // --- Initial Load ---
         // --- --- --- --- --- --- --- --- --- --- --- ---
         
-        document.addEventListener('DOMContentLoaded', () => {
+        document.addEventListener('DOMContentLoaded', async () => {
             // Initial render on load
             renderView();
+            await seedMockMap();
         });
 
         function removeNode(nodeEl) {
@@ -1629,13 +1942,9 @@
             // API Call
             const responseText = await callGeminiAPI(promptText, "Start of conversation", attachment);
             
-            const formattedText = responseText
-                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-                .replace(/\n/g, '<br>');
-
             const responseContainer = document.getElementById(`response-${newNodeId}`);
             if(responseContainer) {
-                responseContainer.querySelector('.node-response-content').innerHTML = formattedText;
+                responseContainer.querySelector('.node-response-content').innerHTML = formatResponseContent(responseText);
             }
             
             runReflow(newNode);
@@ -1738,11 +2047,7 @@
 
                 const responseText = await callGeminiAPI(newPrompt, apiContext, null); 
                 
-                const formattedText = responseText
-                    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-                    .replace(/\n/g, '<br>');
-                
-                responseContentEl.innerHTML = formattedText;
+                responseContentEl.innerHTML = formatResponseContent(responseText);
 
                 // Show Undo Button
                 node.querySelector('.undo-btn').style.display = 'inline-block';

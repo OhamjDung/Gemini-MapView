@@ -1,0 +1,248 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: "Segoe UI", Tahoma, sans-serif;
+  color: #e3e3e3;
+  background-color: #131314;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+.preview-app {
+  display: grid;
+  grid-template-columns: 380px 1fr;
+  min-height: 100vh;
+}
+
+.preview-sidebar {
+  padding: 18px;
+  border-right: 1px solid #4a4a50;
+  background: rgba(30, 30, 33, 0.92);
+  backdrop-filter: blur(6px);
+}
+
+.preview-sidebar-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.preview-badge {
+  flex-shrink: 0;
+  padding: 6px 10px;
+  border: 1px solid #4a4a50;
+  border-radius: 999px;
+  background: rgba(58, 58, 64, 0.92);
+  color: #a0c4ff;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+.preview-eyebrow,
+.preview-chat-eyebrow,
+.preview-label {
+  margin: 0 0 8px;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #a0c4ff;
+}
+
+.preview-sidebar h1,
+.preview-chat h2 {
+  margin: 0 0 10px;
+  line-height: 1.1;
+  color: #ffffff;
+}
+
+.preview-copy {
+  margin: 0;
+  color: #e3e3e3;
+  line-height: 1.6;
+}
+
+.preview-panel {
+  margin-bottom: 14px;
+  padding: 16px;
+  border: 1px solid #4a4a50;
+  border-radius: 16px;
+  background: #2a2a2e;
+  box-shadow: 0 0 15px rgba(130, 170, 255, 0.06);
+}
+
+.preview-panel-hero {
+  background: linear-gradient(180deg, rgba(58, 58, 64, 0.96), rgba(42, 42, 46, 0.96));
+}
+
+.preview-scenarios,
+.preview-actions {
+  display: grid;
+  gap: 10px;
+}
+
+.preview-scenario,
+.preview-actions button {
+  border: 1px solid #4a4a50;
+  border-radius: 12px;
+  padding: 10px 12px;
+  color: #e3e3e3;
+  background: #3a3a40;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 120ms ease, border-color 120ms ease, transform 120ms ease;
+}
+
+.preview-scenario:hover,
+.preview-actions button:hover {
+  transform: translateY(-1px);
+  background: #45454c;
+  border-color: #62626a;
+}
+
+.preview-scenario.is-active {
+  color: white;
+  background: #1a73e8;
+  border-color: #1a73e8;
+  font-weight: 700;
+}
+
+.preview-notes {
+  margin: 0;
+  padding-left: 18px;
+  color: #c5c5c5;
+  line-height: 1.6;
+}
+
+#preview-composer {
+  width: 100%;
+  min-height: 160px;
+  border: 1px solid #4a4a50;
+  border-radius: 12px;
+  padding: 12px;
+  color: #ffffff;
+  background: #1f1f22;
+  resize: vertical;
+  font: inherit;
+}
+
+#preview-composer::placeholder {
+  color: #888;
+}
+
+.preview-main {
+  display: grid;
+  grid-template-rows: 320px 1fr;
+  min-width: 0;
+}
+
+.preview-chat {
+  padding: 18px;
+  border-bottom: 1px solid #4a4a50;
+  overflow: hidden;
+  background: rgba(26, 26, 29, 0.74);
+}
+
+.preview-chat-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 14px;
+}
+
+.preview-chat-copy {
+  margin: 0;
+  color: #c5c5c5;
+  line-height: 1.5;
+}
+
+.preview-status {
+  padding: 8px 12px;
+  border: 1px solid #4a4a50;
+  border-radius: 999px;
+  color: #c5c5c5;
+  background: rgba(42, 42, 46, 0.92);
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.preview-transcript {
+  height: calc(100% - 70px);
+  overflow: auto;
+  display: grid;
+  gap: 12px;
+  padding-right: 6px;
+}
+
+.preview-turn {
+  padding: 14px;
+  border: 1px solid #4a4a50;
+  border-radius: 16px;
+  background: rgba(42, 42, 46, 0.96);
+  box-shadow: 0 0 14px rgba(130, 170, 255, 0.04);
+}
+
+.preview-turn.user {
+  border-color: rgba(160, 196, 255, 0.35);
+}
+
+.preview-turn.assistant {
+  border-color: rgba(74, 74, 80, 1);
+}
+
+.preview-turn-title {
+  margin: 0 0 8px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #c5c5c5;
+}
+
+.preview-turn-copy {
+  margin: 0;
+  color: #e3e3e3;
+  line-height: 1.6;
+  white-space: pre-wrap;
+}
+
+.preview-overlay-stage {
+  position: relative;
+  min-height: 0;
+  background: rgba(19, 19, 20, 0.4);
+}
+
+.preview-overlay-stage .gmv-root {
+  position: absolute;
+  inset: 0;
+  pointer-events: auto;
+}
+
+.preview-overlay-stage .gmv-shell {
+  display: block;
+}
+
+@media (max-width: 1100px) {
+  .preview-app {
+    grid-template-columns: 1fr;
+  }
+
+  .preview-sidebar {
+    border-right: 0;
+    border-bottom: 1px solid #4a4a50;
+  }
+
+  .preview-main {
+    grid-template-rows: 280px 1fr;
+  }
+}
